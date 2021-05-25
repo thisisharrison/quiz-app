@@ -1,1 +1,191 @@
-# quiz-app
+# Quiz App
+
+- [Key Operations](#key-operations)
+- [List of Entities](#list-of-entities)
+- [Required Indexes](#required-indexes)
+- [Collection Relationship Diagram](#collection-relationship-diagram)
+- [Documents](#document)
+- [API Endpoints](#api-endpoints)
+- [Database queries](#database-queries)
+
+## <a name="key-operations"></a>Key Operations
+
+Ranked by most frequent read/write
+
+Teachers 
+
+1. Assign quiz to student(s)
+2. Grade Students answers 
+3. Create quizzes
+4. Add and Remove questions
+5. Make changes to quizzes
+6. Add and Remove multiple choice options
+
+Students
+
+1. Record answers 
+2. Read questions from quiz
+3. Read assigned quizzes
+
+
+## <a name="list-of-entities"></a>List of Entities
+
+- users
+- quizzes
+- questions
+- submissions
+
+## <a name="required-indexes"></a>Required indexes
+
+- `{"username": 1}, {unique: true}`: usernames are unique. We want username indexed for reducing query time on Auth process.
+
+- `{"teacher": 1}`: Indexing on `Quiz` for Teachers to quickly query their own quizzes.
+
+- `{"quiz": 1, "question": 1}, {unique: true}`: Question in a quiz should be unique.
+
+- `{"student": 1, "quiz": 1, "question": 1}, {unique: true}`: There should only be one submission by a student per question and per quiz.This allows quick read and write to submitted answer for Student and Teacher.
+
+## <a name="collection-relationship-diagram"></a>Collection Relationship Diagram
+
+![ERD-Diagram](https://raw.githubusercontent.com/thisisharrison/quiz-app/main/Quiz-App.png)
+
+
+### `users`
+| column name | data type | details               |
+|:------------|:---------:|:----------------------|
+| `id`        |  integer  | required, primary key |
+| `fname`     |  string   | required              |
+| `lname`     |  string   | required              |
+| `email`     |  string   | required              |
+| `username`  |  string   | required, indexed     |
+| `password`  |  string   | required              |
+| `role`      |  string   | required              |
+
+### `quizzes`
+teachers(users) -1-N- quizzes
+quizzes -1-N- questions
+| column name       | data type | details                        |
+|:------------------|:---------:|:-------------------------------|
+| `id`              |  integer  | required, primary key          |
+| `teacher_id`      |  integer  | required, foreign key, indexed |
+| `title`           |  string   | required                       |
+| `due_date`        |  integer  | required, unix                 |
+| `questions`       |   array   | required, QuestionSchema       |
+| `num_questions`   |  integer  | computed                       |
+| `num_submissions` |  integer  | computed, default 0            |
+| `tot_score`       |  integer  | computed, default 0            |
+
+### `questions`
+| column name | data type | details                        |
+|:------------|:---------:|:-------------------------------|
+| `id`        |  integer  | required, primary key          |
+| `quiz_id`   |  integer  | required, foreign key, indexed |
+| `prompt`    |  string   | required                       |
+| `type`      |  string   | required                       |
+| `options`   |   array   | not required, default null     |
+| `solution`  |   array   | not required, default null     |
+| `weight`    |  integer  | required, default 1            |
+
+### `submissions`
+students(users) -1-N- submissions
+quizzes -1-N- submissions
+| column name  | data type | details                              |
+|:-------------|:---------:|:-------------------------------------|
+| `id`         |  integer  | required, primary key                |
+| `student_id` |  integer  | required, foreign key, indexed       |
+| `quiz_id`    |  string   | required, indexed                    |
+| `answers`    |   array   | QuestionSchema, foreign key, indexed |
+| `tot_score`  |  integer  | computed                             |
+
+## <a name="document"></a>Document
+
+### Quiz
+```js
+{
+  _id: <ObjectId>,
+  teacher: <ObjectId>,
+  title: 'Fun quiz',
+  due_date: 1622120400,
+  questions: [
+    {
+      question: <ObjectId>,
+      prompt: '...'
+    }
+  ],
+  num_questions: 10,
+  num_submissions: 15,
+  tot_score: 150
+}
+```
+
+### Question
+```js
+// Multiple choice with one correct answer
+// Solution is the index of the answer
+{
+  _id: <ObjectId>,
+  quiz: <ObjectId>,
+  prompt: 'What is x?',
+  type: 'multiple-choice',
+  options: ['3','5','7','9'],
+  solution: [0],
+  weight: 1
+}
+// Multiple choice with more than one correct answer
+{
+  _id: <ObjectId>,
+  quiz: <ObjectId>,
+  prompt: 'What is a fruit?',
+  type: 'multiple-choice',
+  options: ['apple','orange','brocolli','eggplant'],
+  solution: [0, 1],
+  weight: 1,
+}
+// Text question 
+{
+  _id: <ObjectId>,
+  quiz: <ObjectId>,
+  prompt: 'What is a hash function?',
+  type: 'text',
+  options: null,
+  solution: null,
+  weight: 1,
+}
+```
+
+### Submission
+```js
+{
+  _id: <ObjectId>,
+  student: <ObjectId>,
+  quiz: <ObjectId>,
+  answers: [
+    // submission to a multiple choice with one correct answer
+    {
+      question: <ObjectId>,
+      answer: "1",
+      correct: false,
+      score: 0
+    },
+    // submission to a multiple choice with more than one correct answer
+    {
+      question: <ObjectId>,
+      answer: "0, 1",
+      correct: true,
+      score: 1
+    },
+    // submission to a text question
+    {
+      question: <ObjectId>,
+      answer: "Hash function returns a value used to index into a hash table",
+      correct: true,
+      score: 1
+    }
+  ],
+  tot_score: 100
+}
+```
+
+## <a name="api-endpoints"></a>API Endpoints
+
+## <a name="database-queries"></a>Database queries
