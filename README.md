@@ -112,6 +112,10 @@ quizzes -1-N- submissions
 
 ### Quiz
 
+We have an array that holds extended reference to questions. This is structured in an array to maintain order of the questions. If Teacher chooses to randomize the questions, this model is works too. 
+
+Including the prompt allows Students and Teachers to view all questions at a glance. I assumed prompts rarely changes as well. However, if we do not need this feature, we can change this to an array of ObjectId. We could use `$lookup`, `populate`, or `virtual` to return more information. 
+
 ```js
 {
   _id: <ObjectId>,
@@ -131,6 +135,19 @@ quizzes -1-N- submissions
 ```
 
 ### Question
+
+For multiple choice questions, we can store options as an array. The front end will take care of randomizing options and labelling them 'A', 'B', 'C' and so on. 
+
+We also want to allow one and multiple correct answers. So the solution is an array. This array stores the index of the correct answer. 
+
+In the first example, options are `['3','5','7','9']`. The solution is `[0]`, which points to `'3'`. The front end can randomize and display this: 
+
+  - A: 7
+  - B: 3
+  - C: 9
+  - D: 5
+
+In the front end, we can use `data-*` to store the indexes of these answer. When Student submits ([Submission](#submission)), Student will submit the string `'0'` or `'0, 1'` in the case of multiple answers. We then split the string, parse to integer and check if submitted index(es) matches to the solution.
 
 ```js
 // Multiple choice with one correct answer
@@ -166,7 +183,7 @@ quizzes -1-N- submissions
 }
 ```
 
-### Submission
+### <a name="submission"></a>Submission
 
 ```js
 {
