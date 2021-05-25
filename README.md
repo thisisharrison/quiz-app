@@ -114,7 +114,7 @@ quizzes -1-N- submissions
 
 We have an array that holds extended reference to questions. This is structured in an array to maintain order of the questions. If Teacher chooses to randomize the questions, this model is works too. 
 
-Including the prompt allows Students and Teachers to view all questions at a glance. I assumed prompts rarely changes as well. However, if we do not need this feature, we can change this to an array of ObjectId. We could use `$lookup`, `populate`, or `virtual` to return more information. 
+Including the prompt allows Students and Teachers to view all questions at a glance. I assumed prompts rarely change as well. However, if we do not need this feature, we can change this to an array of `ObjectId`. We could use `$lookup`, `populate`, or `virtual` to return more information. 
 
 ```js
 {
@@ -138,16 +138,16 @@ Including the prompt allows Students and Teachers to view all questions at a gla
 
 For multiple choice questions, we can store options as an array. The front end will take care of randomizing options and labelling them 'A', 'B', 'C' and so on. 
 
-We also want to allow one and multiple correct answers. So the solution is an array. This array stores the index of the correct answer. 
+We also want to allow questions with multiple correct answers. So the solution is an array. This array stores the index of the correct answer. 
 
-In the first example, options are `['3','5','7','9']`. The solution is `[0]`, which points to `'3'`. The front end can randomize and display this: 
+In the first example, options are `['3','6','8','1']`. The solution is `[0]`, which points to `'3'`. The front end can randomize and display this: 
 
-  - A: 7
+  - A: 6
   - B: 3
-  - C: 9
-  - D: 5
+  - C: 1
+  - D: 8
 
-In the front end, we can use `data-*` to store the indexes of these answer. When Student submits ([Submission](#submission)), Student will submit the string `'0'` or `'0, 1'` in the case of multiple answers. We then split the string, parse to integer and check if submitted index(es) matches to the solution.
+In the front end, we can use `data-*` to store the indexes of these answer. When Student submits 'B' as his/her answer ([Submission](#submission)), he/she will submit the string `'0'` (or `'0, 1'` in the case of multiple answers). We then split the string, parse to integer and check if submitted index(es) matches the solution's.
 
 ```js
 // Multiple choice with one correct answer
@@ -155,9 +155,9 @@ In the front end, we can use `data-*` to store the indexes of these answer. When
 {
   _id: <ObjectId>,
   quiz: <ObjectId>,
-  prompt: 'What is x?',
+  prompt: 'What is a prime number?',
   type: 'multiple-choice',
-  options: ['3','5','7','9'],
+  options: ['3','6','8','1'],
   solution: [0],
   weight: 1
 }
