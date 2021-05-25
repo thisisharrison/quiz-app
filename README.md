@@ -47,7 +47,7 @@ Students
 
 - `{"student": 1, "quiz": 1, "question": 1}, {unique: true}`: There should only
   be one submission by a student per question and per quiz.This allows quick
-  read and write to submitted answer for Student and Teacher.
+  read and write to submitted answers for Student and Teacher.
 
 ## <a name="collection-relationship-diagram"></a>Collection Relationship Diagram
 
@@ -221,25 +221,25 @@ In the front end, we can use `data-*` to store the indexes of these answer. When
 
 ### `quizzes`
 
-#+ `GET /api/quizzes` - returns quizzes authored by teacher 
-#+ `GET /api/quizzes/:id` - returns single quiz 
-#+ `POST /api/quizzes` - creates a quiz 
-#+ `PATCH /api/quizzes/:id` - edit a quiz 
-#+ `DELETE /api/quizzes/:id` - remove a quiz
++ `GET /api/quizzes` - returns quizzes authored by teacher
++ `GET /api/quizzes/:id` - returns single quiz 
++ `POST /api/quizzes` - creates a quiz 
++ `PATCH /api/quizzes/:id` - edit a quiz 
++ `DELETE /api/quizzes/:id` - remove a quiz
 
 ### `questions`
 
-#+ `GET /api/questions/:id` - returns a single question 
-#+ `GET /api/quizzes/:quiz_id/questions` - returns all questions 
-#+ `POST /api/quizzes/:quiz_id/questions` - creates a question 
-#+ `PATCH /api/questions/:id` - edit a question 
-#+ `DELETE /api/questions/:id` - remove a question
++ `GET /api/questions/:id` - returns a single question 
++ `GET /api/quizzes/:quiz_id/questions` - returns all questions 
++ `POST /api/quizzes/:quiz_id/questions` - creates a question 
++ `PATCH /api/questions/:id` - edit a question 
++ `DELETE /api/questions/:id` - remove a question
 
 ### `submissions`
 
-#+ `POST /api/submissions/:id/questions/:question_id` - submit an answer, submit a score 
-#+ `PATCH /api/submissions/:id/questions/:question_id` - edit an answer, edit a score 
-#+ `DELETE /api/submissions/:id/questions/:question_id` - remove an answer, remove a score
++ `POST /api/submissions/:id/questions/:question_id` - submit an answer, submit a score 
++ `PATCH /api/submissions/:id/questions/:question_id` - edit an answer, edit a score 
++ `DELETE /api/submissions/:id/questions/:question_id` - remove an answer, remove a score
 
 ## <a name="database-queries"></a>Database queries
 
