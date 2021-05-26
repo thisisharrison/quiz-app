@@ -6,7 +6,6 @@
 - [Collection Relationship Diagram](#collection-relationship-diagram)
 - [Documents](#document)
 - [API Endpoints](#api-endpoints)
-- [Database queries](#database-queries)
 
 ## Key Operations
 
