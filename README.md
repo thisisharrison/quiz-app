@@ -43,12 +43,12 @@ Assumptions
 
 ## Required indexes
 
-### <a name="user-index"></a>User
+### User Index
 
 - `{"username": 1}, {unique: true}`: usernames are unique. We want username
   indexed for reducing query time on Auth process.
 
-### <a name="quiz-index"></a>Quiz
+### Quiz Indexes
 
 - `{"teacher": 1}`: Indexing on `Quiz` for Teachers to quickly query their own
   quizzes.
@@ -56,18 +56,18 @@ Assumptions
 - `{"quiz": 1, "question": 1}, {unique: true}`: Question in a quiz should be
   unique.
 
-### <a name="question-index"></a>Question
+### Question Index
 
 - `{"quiz": 1}`: Quick lookups to a question detail when viewing a quiz.
 
-### <a name="assignment-index"></a>Assignment
+### Assignment Index
 
 - `{"teacher": 1, "student": 1, "quiz": 1, "submission": 1, "due_date": 1}, {unique: true}`:
   One quiz can only be assigned by a teacher to a student with the exact due
   date once. If quizzes can be retaken or reused, these should have different
   `due_date`.
 
-### <a name="submission-index"></a>Submission
+### Submission Index
 
 - `{"student": 1, "quiz": 1, "question": 1}, {unique: true}`: There should only
   be one submission by a student per question and per quiz.This allows quick
