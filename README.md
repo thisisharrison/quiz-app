@@ -131,6 +131,14 @@ but this design allows for higher points questions.
 
 `type` can be `'multiple-choice'` or `'short-answer'`.
 
+When a question is updated or removed, we should use `#post.(save)` middleware
+from [`mongoose`](https://mongoosejs.com/docs/middleware.html#post) to update
+Quiz array. If a Quiz has been assigned, `Submission` with quiz's questions are
+created. If we update the question after we assigned a quiz, we don't want to
+have `Submission` questions and `Quiz` questions out of sync. We should `pull`
+the old Question from Quiz and replace with the new Question to keep questions
+in Submission and assigned quizzes intact.
+
 ### `assignments`
 
 users(student and teacher) -1-N- assignments
@@ -184,7 +192,8 @@ quizzes -1-N- submissions
 | :-------------- | :-------: | :----------------------------------- |
 | `id`            |  integer  | required, primary key                |
 | `student`       |  integer  | required, foreign key, indexed       |
-| `quiz`          |  string   | required, foreign key, indexed       |
+| `quiz`          |  integer  | required, foreign key, indexed       |
+| `assignment`    |  integer  | required, foreign key, indexed       |
 | `answers`       |   array   | QuestionSchema, foreign key, indexed |
 | `submit_status` |  boolean  | required, default false              |
 | `grade_status`  |  string   | required, default 'pending'          |
@@ -286,6 +295,7 @@ index matches the solution's.
   _id: <ObjectId>,
   student: <ObjectId>,
   quiz: <ObjectId>,
+  assignment: <ObjectId>,
   answers: [
     // submission to a multiple choice with one correct answer
     {
